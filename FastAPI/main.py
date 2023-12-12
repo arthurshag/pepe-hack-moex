@@ -7,25 +7,14 @@ from routers.stocks import router as StocksRouter
 from routers.forecast import router as ForecastRouter
 from routers.stockchart import router as StockchartRouter
 from routers.stocks_catalog import router as StocksCatalogRouter
-from fastapi.middleware.cors import CORSMiddleware
+from routers.bot import router as BotRouter
+
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-
-origins = [
-    "http://localhost:3000",
-    "https://localhost:3000"
-]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
+app.include_router(BotRouter, prefix="/bot")
 app.include_router(CompanyRouter, prefix="/company")
 app.include_router(StockRouter, prefix="/stock")
 app.include_router(StocksRouter, prefix="/stocks")

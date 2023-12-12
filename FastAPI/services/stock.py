@@ -39,13 +39,13 @@ def update_stock(data: StockModel, db: Session):
 
     if not stock:
         stock = add_stock(data, db)
+    else:
+        stock.price = data.price
+        stock.price_increase = data.price_increase
 
-    stock.price = data.price
-    stock.price_increase = data.price_increase
-
-    db.add(stock)
-    db.commit()
-    db.refresh(stock)
+        db.add(stock)
+        db.commit()
+        db.refresh(stock)
 
     return stock
 
