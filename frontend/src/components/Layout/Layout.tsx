@@ -5,9 +5,17 @@ import styles from "./Layout.module.scss";
 import Main from "../Main/Main";
 import {Link, Route, Routes, useLocation} from "react-router-dom";
 import Stock from "../Stock/Stock";
-import {BankOutlined, FileOutlined, LineChartOutlined, TeamOutlined} from "@ant-design/icons";
+import {
+    BankOutlined,
+    FileOutlined,
+    FundProjectionScreenOutlined,
+    LineChartOutlined,
+    TeamOutlined
+} from "@ant-design/icons";
 import StockCatalog from "../StockCatalog/StockCatalog";
 import Bot from "../Bot/Bot";
+import About from "../About/About";
+import AuthBot from "../Bot/AuthBot";
 
 
 const {Content, Sider} = LayoutAnt;
@@ -48,8 +56,14 @@ const Layout: React.FC<PropsType> = () => {
                     </Menu.Item>
                     <Menu.Item key="/bot">
                         <Link to="/bot">
-                            <TeamOutlined/>
+                            <FundProjectionScreenOutlined />
                             <span>Торговый бот</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="/about">
+                        <Link to="/about">
+                            <TeamOutlined/>
+                            <span>О нас</span>
                         </Link>
                     </Menu.Item>
                 </Menu>
@@ -58,11 +72,12 @@ const Layout: React.FC<PropsType> = () => {
                        style={{padding: '33px 50px', paddingLeft: 250, margin: '0 auto', maxWidth: '1920px'}}>
                 <Flex gap={5} justify={"space-between"}>
                     {
-                        location !== '/stock-catalog' ?
-                        <a href={'https://www.youtube.com/watch?v=ykgqawluo5E'} style={{maxWidth: 350, width:'100%'}}><Search allowClear
-                                                                                        style={{maxWidth: 350}}
-                                                                                        placeholder={'Введите поиск'}/></a> :
-                        <div />
+                        false ?
+                            <a href={'https://www.youtube.com/watch?v=ykgqawluo5E'}
+                               style={{maxWidth: 350, width: '100%'}}><Search allowClear
+                                                                              style={{maxWidth: 350}}
+                                                                              placeholder={'Введите поиск'}/></a> :
+                            <div/>
                     }
 
                     <Flex gap={30} align={'center'}>
@@ -90,10 +105,11 @@ const Layout: React.FC<PropsType> = () => {
                     <Routes>
                         <Route path="" element={<Main/>}/>
                         <Route path="card" element={<Stock/>}>
-                            <Route path=":id"  element={<Stock/>}/>
+                            <Route path=":id" element={<Stock/>}/>
                         </Route>
                         <Route path="stock-catalog" element={<StockCatalog/>}/>
-                        <Route path="bot" element={<Bot/>}/>
+                        <Route path="bot" element={<AuthBot/>}/>
+                        <Route path="about" element={<About/>}/>
                     </Routes>
                 </Content>
             </LayoutAnt>

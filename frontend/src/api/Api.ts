@@ -91,7 +91,6 @@ export const authAPI = {
 
 export const mainApi = {
     async getStocksCatalog({searchValue, pageSize, page}: any) {
-        debugger
         return await fetch(`${baseUrl}stocks-catalog/?limit=${pageSize}&page=${page}&search_value=${searchValue || ''}`, {
             method: "GET",
             headers: {
@@ -121,8 +120,10 @@ export const mainApi = {
             .then((response) => response.json())
             .catch((error) => console.error(error));
     },
-    async getChartStock(id: number) {
-        return await fetch(`${baseUrl}stockchart/${id}?date_from=2023-02-01&date_to=2024-01-01`, {
+    async getChartStock(id: number, dateRange: any) {
+        const startDate = dateRange[0] || '2023-02-01';
+        const endDate = dateRange[1] || '2024-01-01';
+        return await fetch(`${baseUrl}stockchart/${id}?date_from=${startDate}&date_to=${endDate}`, {
             method: "GET",
             headers: {
                 "Access-Token": window.localStorage.getItem("access_token") || "",

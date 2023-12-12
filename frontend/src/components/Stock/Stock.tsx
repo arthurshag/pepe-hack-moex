@@ -1,5 +1,5 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Avatar, Card, Col, Flex, Row, Space, Typography} from 'antd';
+import {Avatar, Button, Card, Col, Flex, Row, Space, Typography} from 'antd';
 import Search from "antd/es/input/Search";
 import Chart from "./Chart";
 import {mainApi} from "../../api/Api";
@@ -37,7 +37,7 @@ const Stock: FC = () => {
                               style={{
                                   background: dataCard.background,
                                   width: '100%',
-                                  marginBottom: 70,
+                                  marginBottom: 30,
                                   padding: '24px 28px'
                               }}
                               bodyStyle={{padding: 0}}
@@ -78,9 +78,16 @@ const Stock: FC = () => {
                     </Col>
                     <Col offset={2} span={12} style={{maxWidth: 425}}>
                         <div style={{paddingBottom: 20}}>
-                            <p style={{fontSize: '24px', fontWeight: '500', marginBottom: 8}}>О
-                                компании {dataCard.companyName}</p>
-                            <p style={{fontSize: '13px', fontWeight: '500'}}>{dataCard.description}</p>
+                            <p style={{fontSize: '24px', fontWeight: '500', marginBottom: 8}}>
+                                О компании {dataCard.companyName}</p>
+
+                            <p style={{fontSize: '13px', fontWeight: '500', marginBottom: 8}}>{dataCard.description}</p>
+                            <Button size={'small'} type={'default'} target={'_blank'}
+                                    style={{padding: 5, height: 'auto', fontSize: 13}}
+
+                                    href={`https://www.moex.com/ru/issue.aspx?board=TQBR&code=${id}`}>
+                                Открыть компанию на Московской бирже
+                            </Button>
                         </div>
                         <div>
                             <h2 style={{paddingBottom: 16, fontWeight: '500'}}>Сводный прогноз</h2>

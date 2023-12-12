@@ -2,11 +2,18 @@ import React, {FC} from 'react';
 import {Card, Divider, Flex, Typography} from "antd";
 import styles from "./Stocks.module.scss";
 import {StockFeed} from "../../../types";
+import {useNavigate} from "react-router-dom";
 
-const Stock: FC<StockFeed> = ({price, pricePercentage, companyName, companyIcon}) => {
+const Stock: FC<StockFeed> = ({price, pricePercentage, companyName, companyIcon, id}) => {
     const changeIsPositive = pricePercentage >= 0;
+    const navigate = useNavigate();
+
+    function onClick(): void {
+        navigate(`/card/${id}`);
+    }
+
     return (
-        <Card className={styles.card} bordered={true} size={"small"}>
+        <Card className={styles.card} bordered={true} size={"small"} onClick={onClick} hoverable={true}>
             <Flex vertical align={'center'}>
                 <Typography.Text strong><span>{price || '0,00'}</span> <Typography.Text
                     type={changeIsPositive ? 'success' : 'danger'}>{changeIsPositive && '+'} {pricePercentage}%</Typography.Text></Typography.Text>

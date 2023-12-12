@@ -25,7 +25,7 @@ const Stocks: FC = () => {
 
     return (
         <>
-            <div className={styles.listWrapper}>
+            <div className={styles.listWrapper + ' gradient-background'}>
                 <Flex gap={5} wrap={'nowrap'} vertical>
                     <Button style={styleBtn} danger={typeStocks === 0} onClick={() => setTypeStocks(0)}>
                         Взлеты
@@ -37,7 +37,7 @@ const Stocks: FC = () => {
                         Рекомендованные
                     </Button>
                 </Flex>
-                <div className={styles.listWrapperHidden}>
+                {stocksData?.length > 0 && <div className={styles.listWrapperHidden}>
                     <Space className={styles.list}>
                         {stocksData.map((value) => {
                             return <>
@@ -50,7 +50,8 @@ const Stocks: FC = () => {
                             </>
                         })}
                     </Space>
-                </div>
+                </div>}
+
             </div>
 
         </>

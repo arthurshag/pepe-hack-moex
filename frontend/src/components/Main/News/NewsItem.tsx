@@ -3,14 +3,14 @@ import {Card, Divider, Flex, Image, Typography} from 'antd';
 import {useNavigate} from "react-router-dom";
 import styles from "./News.module.scss";
 
-const NewsItem: FC = () => {
+const NewsItem: FC<{ title: string, description: string, imgSrc: string }> = ({title, description, imgSrc}) => {
     const navigate = useNavigate();
 
     function onClick(): void {
     }
 
     return (
-        <Flex flex="1 1 242px">
+        <Flex flex="1 1 242px" style={{height: '100%', width: '100%'}}>
             <Card bordered={true} size={"small"}
                   hoverable={true}
                   className={styles.newsItem}
@@ -19,13 +19,26 @@ const NewsItem: FC = () => {
                   onClick={onClick}
                   cover={<img
                       height={124}
-                      src="https://img.freepik.com/premium-vector/growth-arrow-financial-graph-on-digital-technology-strategy-background_701664-107.jpg"
+                      src={imgSrc || 'https://img.freepik.com/premium-vector/growth-arrow-financial-graph-on-digital-technology-strategy-background_701664-107.jpg'}
                   />}
             >
                 <Flex vertical style={{paddingBottom: 30, paddingLeft: 12, paddingRight: 12, paddingTop: 10}}>
-                    <Typography.Text style={{fontSize: 11, paddingBottom: 9}}>11 ноября</Typography.Text>
-                    <Typography.Text strong style={{fontSize: 13, paddingBottom: 16}}>Новость</Typography.Text>
-                    <Typography.Text style={{fontSize: 11}}>Че-то произошло, где-то там и че-то случилось дальше вооот</Typography.Text>
+                    <Typography.Text style={{
+                        fontSize: 11,
+                        paddingBottom: 9,
+
+                    }}>12 Декабря</Typography.Text>
+                    <Typography.Text strong className={styles.title} style={{
+                        fontSize: 13, marginBottom: 16, textOverflow: 'ellipsis'
+                    }}>{title}</Typography.Text>
+                    <Typography.Text style={{
+                        fontSize: 11,
+                        maxHeight: '100%',
+                        minHeight: 0,
+                        flexBasis: 66,
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden'
+                    }}>{description}</Typography.Text>
                 </Flex>
             </Card>
         </Flex>

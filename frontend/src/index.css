@@ -21,9 +21,8 @@ code {
   flex-direction: column;
   align-items: stretch;
   justify-items: stretch;
-  min-width: 370px;
+  min-width: 1700px;
 }
-
 
 /* Remove default padding */
 ul[class],
