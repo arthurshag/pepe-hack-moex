@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pickle as pkl
 import pandas as pd
 import requests
+from catboost import CatBoostRegressor
 
 
 # backtest
@@ -10,17 +11,31 @@ import requests
 
 def start_forecast_backtest(backtest):
     tickers = ['AFLT', 'BANE', 'DSKY', 'FEES', 'GAZP', 'PHOR', 'POSI', 'SBER', 'YNDX', 'MTLR']
+    preds = pd.read_csv('./forecasts/preds.csv', index_col=0)
+    preds['dt'] = preds['dt'].apply(lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
 
     while True:
         if backtest.get_new_data_was_adedd():
-            for ticker in tickers:
-                data = load_data_for_forecast_backtest(ticker, backtest)
-                do_forecat(ticker, None, data=data)
-                backtest.set_new_data_was_adedd(False)
-                backtest.forecast_was_adedd = True
+            data = load_data_for_forecast_backtest(backtest)
+            do_forecast_backtest(data, preds, backtest)
+            backtest.set_new_data_was_adedd(False)
+            backtest.set_forecast_was_adedd(True)
 
-def load_data_for_forecast_backtest(ticker_name, backtest):
-    tradestats = backtest.get_tradestats()
+def do_forecast_backtest(data, preds, backtest):
+    cur_dt = data.ts.max()
+    cur_data = data[data.ts == cur_dt]
+    cur_pred = preds[preds.dt == cur_dt]
+    cur_pred.reset_index(drop=True, inplace=True)
+    for i, r in cur_pred.iterrows():
+        cur_pred.loc[i, 'price_increase'] = cur_data[cur_data.secid == r.ticker].pr_close.values[0] - r.pred
+
+    cur_pred.rename(columns={'pred': "price"}, inplace=True)
+    backtest.set_forecast(cur_pred[['ticker', 'period', 'price', 'price_increase']])
+
+
+def load_data_for_forecast_backtest(backtest):
+    tradestats = backtest.get_tradestats()[['pr_close', 'ts', 'secid']]
+    return tradestats
     tradestats = tradestats[tradestats.secid == ticker_name]
     tradestats.drop(columns='secid', inplace=True)
 
@@ -36,6 +51,8 @@ def load_data_for_forecast_backtest(ticker_name, backtest):
     df = df.merge(obstats, on=['ts'], how='left')
 
     return df
+
+
 
 ############################################################
 
@@ -74,11 +91,9 @@ def do_forecat(ticker_name, cur_datetime=None, data=None):
         df = load_data_for_forecast(ticker_name, cur_datetime.date())
 
     cur_datetime = df.ts.values[-1]
-
     df = add_features(df)
 
     pred_h, pred_d, pred_w = get_forecast(df.values[-1], ticker_name)
-
     save_forecast(ticker_name, [pred_h, pred_d, pred_w], df.pr_close.values[-1])
 
     return cur_datetime
@@ -182,18 +197,30 @@ def add_features(df):
 
 
 def get_forecast(df, ticker_name):
-    with open(f"./forecasts/models/hourly_models/model_{ticker_name}.pkl", 'rb') as file:
+
+    with open(f"./models/hourly_models/model_{ticker_name}.pkl", 'rb') as file:
         model = pkl.load(file)
     pred_h = model.predict(df)
 
-    with open(f"./forecasts/models/daily_models/model_{ticker_name}.pkl", 'rb') as file:
+    with open(f"./models/daily_models/model_{ticker_name}.pkl", 'rb') as file:
         model = pkl.load(file)
     pred_d = model.predict(df)
 
-    with open(f"./forecasts/models/weekly_models/model_{ticker_name}.pkl", 'rb') as file:
+    with open(f"./models/weekly_models/model_{ticker_name}.pkl", 'rb') as file:
         model = pkl.load(file)
     pred_w = model.predict(df)
-    # print(ticker_name, pred_h, pred_d, pred_w)
+
+
+
+    # model = CatBoostRegressor().load_model(f"./models/hourly_models/model_{ticker_name}.kek")
+    # pred_h = model.predict(df)
+    #
+    # model = CatBoostRegressor().load_model(f"./models/daily_models/model_{ticker_name}.kek")
+    # pred_d = model.predict(df)
+    #
+    # model = CatBoostRegressor().load_model(f"./models/weekly_models/model_{ticker_name}.kek")
+    # pred_w = model.predict(df)
+
     return pred_h, pred_d, pred_w
 
 
@@ -211,9 +238,66 @@ def save_forecast(ticker_name, preds, cur_pris):
         requests.post(f'http://127.0.0.1:8000/forecast/{ticker_name}', json=json_data)
 
 
+# if __name__ == "__main__":
+#     df_with_forecast = pd.DataFrame(columns=['ticker', 'period', 'dt', 'pred'])
+#
+#     path = 'C:/Users/Илья/Desktop/ALGo/git/pepe-hack-moex/bot/backtest_data'
+#     tradestats_data = pd.read_csv(f'{path}/backtest_tradestats.csv', index_col=0)
+#     tradestats_data['ts'] = tradestats_data['ts'].apply(lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
+#     obstats_data = pd.read_csv(f'{path}/backtest_obstats.csv', index_col=0)
+#     obstats_data['ts'] = obstats_data['ts'].apply(lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
+#     orderbook_data = pd.read_csv(f'{path}/backtest_orderbook.csv', index_col=0)
+#     orderbook_data['ts'] = orderbook_data['ts'].apply(lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
+#
+#     tradestats = pd.read_csv(f'{path}/backtest_tradestats_2023-10-01_2023-10-31.csv', index_col=0)
+#     tradestats['ts'] = tradestats['ts'].apply(lambda x: datetime.strptime(x, "%Y-%m-%d %H:%M:%S"))
+#
+#     tradestats_data = pd.concat([tradestats, tradestats_data])
+#
+#
+#     for ticker_name in ['AFLT', 'BANE', 'DSKY', 'FEES', 'GAZP', 'PHOR', 'POSI', 'SBER', 'YNDX', 'MTLR']:
+#         tradestats_data_cur = tradestats_data[tradestats_data.secid == ticker_name]
+#         tradestats_data_cur.drop(columns='secid', inplace=True)
+#
+#         obstats_data_cur = obstats_data[obstats_data.secid == ticker_name]
+#         obstats_data_cur.drop(columns=['secid', 'val_b', 'val_s', 'vol_b', 'vol_s'], inplace=True)
+#
+#         orderbook_data_cur = orderbook_data[orderbook_data.secid == ticker_name]
+#         orderbook_data_cur.drop(columns=['secid'], inplace=True)
+#
+#         df = tradestats_data_cur.merge(obstats_data_cur, on=['ts'], how='left')
+#         df = df.merge(orderbook_data_cur, on=['ts'], how='left')
+#
+#         datetime_stop = datetime.strptime('2023-10-31 18:40:00', "%Y-%m-%d %H:%M:%S")
+#
+#
+#         a = df[df.ts <= datetime_stop]
+#
+#         ind_end = a.index[-1]
+#
+#         dt_cur = df[ind_end+1:].ts
+#
+#         df = add_features(df)
+#         df = df[ind_end + 1:]
+#         pred_h, pred_d, pred_w = get_forecast(df, ticker_name)
+#
+#         preds = [pred_h, pred_d, pred_w]
+#         periods = ['hour', 'day', 'week']
+#
+#         for period, pred in zip(periods, preds):
+#
+#             cur_df = pd.DataFrame()
+#             cur_df['ticker'] = [ticker_name]*len(df)
+#             cur_df['period'] = [period]*len(df)
+#             cur_df['dt'] = list(dt_cur)
+#             cur_df['pred'] = list(pred)
+#
+#             df_with_forecast = pd.concat([df_with_forecast, cur_df])
+#
+#     df_with_forecast.to_csv('preds.csv')
 
 
-if __name__ == "__main__":
-    start_forecast()
+
+    # start_forecast()
 
 
