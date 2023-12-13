@@ -4,11 +4,10 @@ import type {ColumnsType} from 'antd/es/table';
 import {useNavigate} from "react-router-dom";
 
 interface DataType {
-    id: string;
     companyName: string;
-    count: number;
-    buyPrice: number;
-    salePrice: number;
+    stocksCount: number;
+    currentPrice: number;
+    purchasePrice: number;
 }
 
 const columns: ColumnsType<DataType> = [
@@ -27,7 +26,7 @@ const columns: ColumnsType<DataType> = [
         key: 'count',
         className: 'styles.row',
         render: (text, record) => <div>
-            {record.count}
+            {record.stocksCount}
         </div>,
     },
     {
@@ -36,7 +35,7 @@ const columns: ColumnsType<DataType> = [
         key: 'purchasePrice',
         className: 'styles.row',
         render: (text, record) => <div>
-            {record.buyPrice}
+            {record.purchasePrice}
         </div>,
     },
     {
@@ -45,55 +44,27 @@ const columns: ColumnsType<DataType> = [
         key: 'currentPrice',
         className: 'styles.row',
         render: (text, record) => <div>
-            {record.salePrice}
+            {record.currentPrice}
         </div>,
     },
 ];
 
-const data: DataType[] = [
-    {
-        id: '1',
-        companyName: 'СБЕР',
-        count: 32,
-        buyPrice: 100,
-        salePrice: 96,
-    },
-    {
-        id: '2',
-        companyName: 'ARFLT',
-        count: 250,
-        buyPrice: 572,
-        salePrice: 455,
-    },
-    {
-        id: '3',
-        companyName: 'Yandex',
-        count: 33,
-        buyPrice: 2178,
-        salePrice: 1964,
-    },
-    {
-        id: '4',
-        companyName: 'MOEX',
-        count: 856,
-        buyPrice: 500,
-        salePrice: 500000,
-    }
-];
-
-const StockTable: React.FC = () => {
+const StockTable: React.FC<{data: any}> = ({data}) => {
     const navigate = useNavigate();
 
     function onClick(): void {
         // navigate(`/card`);
     }
 
-    return <TableAnt pagination={false} onRow={(record, rowIndex) => {
+    data = [...data,...data,...data];
+    return <TableAnt pagination={false}
+                     style={{maxHeight: '300px', overflowY: 'auto'}}
+                     onRow={(record, rowIndex) => {
         return {
             onClick: onClick, // click row
 
         };
     }}
-                     columns={columns} dataSource={data}/>;
+                     columns={columns} dataSource={[...data,...data,...data]}/>;
 };
 export default StockTable;

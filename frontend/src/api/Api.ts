@@ -133,3 +133,47 @@ export const mainApi = {
             .catch((error) => console.error(error));
     },
 };
+
+
+export const botApi = {
+    async startBot({date_to, risk_level}: any) {
+        return await fetch(`${baseUrl}bot/start?` + new URLSearchParams({date_to, risk_level, user_id: '0'}), {
+            method: "POST",
+            headers: {
+                "Access-Token": window.localStorage.getItem("access_token") || "",
+            },
+        })
+            .then((response) => response.json())
+            .catch((error) => console.error(error));
+    },
+    async stopBot() {
+        return await fetch(`${baseUrl}bot/stop?` + new URLSearchParams({user_id: '0'}), {
+            method: "POST",
+            headers: {
+                "Access-Token": window.localStorage.getItem("access_token") || "",
+            },
+        })
+            .then((response) => response.json())
+            .catch((error) => console.error(error));
+    },
+    async getBotInfo() {
+        return await fetch(`${baseUrl}bot/?` + new URLSearchParams({user_id: '0'}), {
+            method: "GET",
+            headers: {
+                "Access-Token": window.localStorage.getItem("access_token") || "",
+            },
+        })
+            .then((response) => response.json())
+            .catch((error) => console.error(error));
+    },
+    async getBotHistory() {
+        return await fetch(`${baseUrl}bot/history?` + new URLSearchParams({user_id: '0'}), {
+            method: "GET",
+            headers: {
+                "Access-Token": window.localStorage.getItem("access_token") || "",
+            },
+        })
+            .then((response) => response.json())
+            .catch((error) => console.error(error));
+    },
+};
