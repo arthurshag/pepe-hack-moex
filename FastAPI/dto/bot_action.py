@@ -9,8 +9,8 @@ class BotActionType(Enum):
 
 
 class BotActionColor(Enum):
-    GREEN = "#AAFF00"
-    RED = "#FF5733"
+    GREEN = "#06AB03"
+    RED = "#FF0000"
 
 
 class BotAction(BaseModel):
