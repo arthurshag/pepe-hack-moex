@@ -53,8 +53,16 @@ const Bot: FC<{ removeBroker: () => void, broker: string }> = memo(({broker, rem
     useEffect(() => {
         botApi.getBotInfo().then((data) => {
             setDataBot(data);
-            setRiskLvl(data.risk_level || 3)
         });
+        const interval = setInterval(() => {
+            if (dataBot.state === 1) {
+                botApi.getBotInfo().then((data) => {
+                    setDataBot(data);
+                    setRiskLvl(data.risk_level);
+                });
+            }
+        }, 5000);
+        return () => clearInterval(interval);
     }, [])
 
     const openNotification = (message: string) => {
@@ -165,7 +173,13 @@ const Bot: FC<{ removeBroker: () => void, broker: string }> = memo(({broker, rem
                                             <div>
                                                 <h3 style={{fontSize: 16, fontWeight: 600}}>Текущее
                                                     состояние:</h3>
-                                                <p style={{fontSize: 24, fontWeight: "bold", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                                                <p style={{
+                                                    fontSize: 24,
+                                                    fontWeight: "bold",
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>
                                                     {dataBot.currentBalance}<span
                                                     style={{color: '#06AB03'}}>+ {Math.ceil(dataBot.currentBalance / dataBot.initialBalance * 1000) / 10}%</span>
                                                 </p>
@@ -173,7 +187,10 @@ const Bot: FC<{ removeBroker: () => void, broker: string }> = memo(({broker, rem
                                                 <h3 style={{fontSize: 16, fontWeight: 600, marginTop: 20}}>Внесено:</h3>
                                                 <p style={{
                                                     fontSize: 24,
-                                                    fontWeight: "bold", whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+                                                    fontWeight: "bold",
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
                                                 }}>{dataBot.initialBalance}</p>
                                             </div>
                                             : null
