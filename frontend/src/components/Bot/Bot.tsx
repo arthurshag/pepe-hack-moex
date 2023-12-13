@@ -61,7 +61,7 @@ const Bot: FC<{ removeBroker: () => void, broker: string }> = memo(({broker, rem
                     setRiskLvl(data.risk_level);
                 });
             }
-        }, 5000);
+        }, 1000);
         return () => clearInterval(interval);
     }, [])
 

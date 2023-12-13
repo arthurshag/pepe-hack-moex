@@ -91,7 +91,7 @@ const HistoryTable: React.FC = memo(() => {
             botApi.getBotHistory().then((data) => {
                 setData(data);
             });
-        }, 5000);
+        }, 1000);
         return () => clearInterval(interval);
     }, [])
 
