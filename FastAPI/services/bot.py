@@ -28,10 +28,10 @@ def add_bot(data: BotModel, db: Session):
 def get_bot_state(user_id: int, db: Session):
     bot = db.query(BotBase).filter(BotBase.user_id == user_id).first()
 
-    if bot:
-        return bot
-    else:
-        HTTPException(status_code=404, detail="User ID Not Found")
+    if not bot:
+        bot = add_bot(BotModel(user_id=user_id), db)
+
+    return bot
 
 
 def set_bot_state(data: BotModel, db: Session):
@@ -122,7 +122,9 @@ def get_bot_info(user_id: int, db: Session):
     result = {
         "initialBalance": bot.initial_balance,
         "currentBalance": bot.current_balance,
-        "state": bot.state
+        "state": bot.state,
+        "dateTo": bot.date_to,
+        "riskLevel": bot.risk_level
     }
 
     stocks = []
