@@ -56,7 +56,6 @@ const StockTable: React.FC<{data: any}> = ({data}) => {
         // navigate(`/card`);
     }
 
-    data = [...data,...data,...data];
     return <TableAnt pagination={false}
                      style={{maxHeight: '300px', overflowY: 'auto'}}
                      onRow={(record, rowIndex) => {
@@ -65,6 +64,6 @@ const StockTable: React.FC<{data: any}> = ({data}) => {
 
         };
     }}
-                     columns={columns} dataSource={[...data,...data,...data]}/>;
+                     columns={columns} dataSource={data}/>;
 };
 export default StockTable;
