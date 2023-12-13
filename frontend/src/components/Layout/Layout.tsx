@@ -60,12 +60,12 @@ const Layout: React.FC<PropsType> = () => {
                             <span>Торговый бот</span>
                         </Link>
                     </Menu.Item>
-                    <Menu.Item key="/about">
-                        <Link to="/about">
-                            <TeamOutlined/>
-                            <span>О нас</span>
-                        </Link>
-                    </Menu.Item>
+                    {/*<Menu.Item key="/about">*/}
+                    {/*    <Link to="/about">*/}
+                    {/*        <TeamOutlined/>*/}
+                    {/*        <span>О нас</span>*/}
+                    {/*    </Link>*/}
+                    {/*</Menu.Item>*/}
                 </Menu>
             </Sider>
             <LayoutAnt className={styles.content}
@@ -109,7 +109,7 @@ const Layout: React.FC<PropsType> = () => {
                         </Route>
                         <Route path="stock-catalog" element={<StockCatalog/>}/>
                         <Route path="bot" element={<AuthBot/>}/>
-                        <Route path="about" element={<About/>}/>
+                        {/*<Route path="about" element={<About/>}/>*/}
                     </Routes>
                 </Content>
             </LayoutAnt>

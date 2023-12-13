@@ -14,7 +14,7 @@ import {
     Typography
 } from 'antd';
 import StockTable from "./StockTable";
-import {BellOutlined} from "@ant-design/icons";
+import {BellOutlined, SettingFilled} from "@ant-design/icons";
 import {botApi} from "../../api/Api";
 import HistoryTable from "./HistoryTable";
 import {SliderMarks} from "antd/es/slider";
@@ -138,7 +138,16 @@ const Bot: FC<{ removeBroker: () => void, broker: string }> = memo(({broker, rem
                     <Col span={6} style={{height: '100%', paddingTop: 25}}>
                         <Space direction={'vertical'} size={20}>
                             <div>
-                                <h2 style={{paddingBottom: 20}}>Настройки</h2>
+                                <h2 style={{paddingBottom: 20}}>Настройки {'  '}
+                                    <span
+                                        className={styles.startedBot + ' ' + (botIsStarted ? styles.startedBot__visible : '')}
+                                        style={{
+                                            fontSize: '0.7em',
+                                            marginLeft: 10,
+                                            color: 'gray'
+                                        }}>бот запущен <SettingFilled spin/></span>
+                                </h2>
+
                                 <h3 style={{fontSize: 16, fontWeight: 600, marginBottom: 10}}>Время
                                     инвестирования</h3>
                                 <DatePicker showTime style={{width: 300}} value={date} placeholder={'Выберите дату'}
